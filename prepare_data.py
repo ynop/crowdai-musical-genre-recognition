@@ -20,7 +20,7 @@ def create_test_list():
 
 
 def create_train_list():
-    out = os.path.join(DATA_ROOT, 'test.txt')
+    out = os.path.join(DATA_ROOT, 'train.txt')
 
     tracks = fma.load(os.path.join(DATA_ROOT, 'fma_metadata', 'tracks.csv'))
     subset = tracks.index[tracks['set', 'subset'] <= 'medium']
@@ -32,14 +32,16 @@ def create_train_list():
     m = {v: i for i, v in enumerate(classes)}
     labels = labels.map(m).values
 
-    map = {}
+    map = []
 
     for i in range(subset.size):
         track_id = subset[i]
-        tid_str = '{:06d}'.format(track_id)
-        track_path = os.path.join(DATA_ROOT, 'fma_medium', tid_str[:3], tid_str + '.mp3')
 
-        map[track_id] = (track_path, labels[i])
+        if track_id not in fma.FILES_TRAIN_FAULTY:
+            tid_str = '{:06d}'.format(track_id)
+            track_path = os.path.join(DATA_ROOT, 'fma_medium', tid_str[:3], tid_str + '.mp3')
+
+            map.append((track_id, track_path, labels[i]))
 
     textfile.write_separated_lines(out, map, separator=' ', sort_by_column=0)
 

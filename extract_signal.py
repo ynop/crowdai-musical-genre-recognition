@@ -19,8 +19,7 @@ def extract_features(track_list, out):
         track_path = info[1]
 
         samples, sampling_rate = librosa.core.load(track_path, sr=None, mono=True)
-        feats = librosa.feature.melspectrogram(y=samples, sr=sampling_rate, n_fft=2048, hop_length=1024, n_mels=128).T
-        feats = feats.astype(np.float32)
+        feats = samples.astype(np.float32)
         f.create_dataset(str(track_id), data=feats)
 
     f.close()
@@ -33,7 +32,7 @@ train_list = textfile.read_separated_lines(train_path, separator=' ')
 test_list = textfile.read_separated_lines(test_path, separator=' ')
 
 print('TRAIN')
-extract_features(train_list, os.path.join(DATA_ROOT, 'train_feats.h5'))
+extract_features(train_list, os.path.join(DATA_ROOT, 'train_samples.h5'))
 
 print('TEST')
-extract_features(test_list, os.path.join(DATA_ROOT, 'test_feats.h5'))
+extract_features(test_list, os.path.join(DATA_ROOT, 'test_samples.h5'))

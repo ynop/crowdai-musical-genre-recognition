@@ -1,0 +1,7 @@
+numpy
+pandas
+librosa
+h5py
+crowdai
+git+https://github.com/ynop/pingu.git
+git+https://github.com/ynop/candle.git

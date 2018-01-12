@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage[utf8]{inputenc} % ü, ...
+\usepackage{graphicx}
+\usepackage[font=small,skip=10pt]{caption}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\setcounter{secnumdepth}{4}
+
+\title{Machine Intelligence Lab Hackathon: Learning to Recognize Musical Genre}
+\author{Matthias Büchi}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} the challenge \textit{WWW 2018 Challenge: Learning to Recognize Musical Genre} was tackled. With the increasing popularity of music streaming services and large music databases, an automatic system for managing the data is essential. The challenge exactly targets this topic, specifically classifying musical audio into genres (e.g. rock, pop, etc.). During the 3 days of work in this challenge the main focus was on implementing an approach using convolutional neural networks.
+\end{abstract}
+
+\section{Introduction}
+
+The task of the challenge was to recognize the genre from a piece of music. Given a piece of audio, with a length of 30 seconds, one of 16 genres should be predicted. For this purpose a dataset of musical audio was provided in form of the FMA Dataset \cite{fma}. But only the \textit{medium} subset must be used for training, consisting of 25000 tracks. Furthermore a test set with 35000 tracks without labels was given, which have to be predicted.
+
+The performance of the submitted result was evaluated using \textbf{Mean Log Loss} and as a second metric the \textbf{Mean F1 Score}. The baseline system in form of a SVM, available in the start-kit of the challenge (\cite{starterkit}), was first reproduced and achieved a Mean Log Loss of ~0.985 and a Mean F1 Score of 0.6922. 
+
+In a next step the data was explored and prepared for the training of a neural network. From overlapping windows of the raw audio signal a \textbf{Convolutional Neural Network} with subsequent fully-connected layers was trained to predict the genre of the given window.
+
+\section{Findings}
+
+\subsection{Data preparation}
+The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. 
+
+\subsection{Model}
+
+\section{Outlook}
+
+\bibliographystyle{plain}
+\bibliography{sample}
+
+\end{document}
