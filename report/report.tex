@@ -26,21 +26,21 @@ In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} t
 
 \section{Introduction}
 
-The task of the challenge was to recognize the genre from a piece of music. Given a piece of audio, with a length of 30 seconds, one of 16 genres should be predicted. For this purpose a dataset of musical audio was provided in form of the \textit{FMA Dataset} (\cite{fma}). But only the \textit{medium} subset must be used for training, consisting of 25000 tracks. Furthermore a test set with 35000 tracks without labels was given, which had to be predicted.
+The task of the challenge was to recognize the genre from a piece of music. Given a piece of audio, with a length of 30 seconds, one of 16 genres should be predicted. For this purpose a dataset of musical audio was provided in form of the \textit{FMA Dataset} (\cite{fma}). But only the \textit{medium} subset must be used for training, consisting of 25000 tracks. Furthermore a test set with 35000 tracks without labels was given, which had to be predicted. The performance of submitted results was evaluated using \textit{Mean Log Loss} and \textit{Mean F1 Score} as a second metric. 
 
-The performance of the submitted result was evaluated using \textit{Mean Log Loss} and as a second metric the \textit{Mean F1 Score}. The baseline system in form of a SVM, available in the \textit{starter-kit} (\cite{starterkit}) of the challenge, was first reproduced and achieved a \textit{Mean Log Loss} of $\sim$0.985 and a \textit{Mean F1 Score} of 0.6922. It used features also provided for the challenge, where every track has one feature vector with a dimension of 518. For different feature types, like \textit{MFCC}, the values and their statistics are average over the full track and then concatenated to form a single feature vector.
+First the baseline system in form of a SVM, available in the \textit{starter-kit} (\cite{starterkit}) of the challenge, was reproduced and achieved a \textit{Mean Log Loss} of $\sim$0.985 and a \textit{Mean F1 Score} of 0.6922. It used features also provided for the challenge, where every track has one feature vector with a dimension of 518. For different feature types, like \textit{MFCC}, the values and their statistics are averaged over the full track and then concatenated to form a single feature vector.
 
 In a next step the data was explored and prepared for training a neural network. From overlapping windows of the raw audio signal a convolutional neural network (CNN) with subsequent fully-connected layers was trained to predict the genre of a given window.
 
 \section{Findings}
 
 \subsection{Data preparation}
-The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. For training, the data was further split into a training and a validation set, where the training part contained 80\% of the tracks for every genre.
+The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one only had 21 samples. For training, the data was further split into a training and a validation set, where the training part contained 80\% of the tracks for every genre.
 
 \subsection{Recognition System}
 As input to the recognition system 1-second windows shifted by 0.25 seconds from the raw audio signal were used. Samples smaller than a second were padded with zeroes.
 
-To extract features from the signal three convolutional layers with average pooling were used. The first two layers use small filter sizes, whereas the third uses a bigger filter size, intended to model longer temporal properties. Subsequent fully-connected layers with softmax as final activation were used to predict the probabilities for 16 musical genres. Except for the last layer, batch normalization and ReLU activation were used.
+To extract features from the signal three convolutional layers with average pooling were used. The first two layers use small filter sizes, whereas the third uses a bigger filter size, intended to model longer temporal patterns. Subsequent fully-connected layers, with softmax as final activation, were used to predict the probabilities for 16 musical genres. Except for the last layer, batch normalization and ReLU activation were used.
 
 \begin{table}[h]
 \centering
@@ -63,7 +63,7 @@ To extract features from the signal three convolutional layers with average pool
 \end{table}
 
 \subsubsection{Training}
-The system was trained using \textit{Adam} with a learning rate of 0.001 for two iterations over the training data. It was trained to optimize the \textit{Binary Cross Entropy Loss}.
+The system was trained using the \textit{Adam} optimizer with a learning rate of 0.001 for two iterations over the training data. It was trained to optimize the \textit{Binary Cross Entropy Loss}.
 
 \subsubsection{Prediction}
 For prediction, non-overlapping 1 second windows were used. The output of all windows for a single track were averaged to represent the final prediction. The submitted result achieved a \textit{Mean Log Loss} of 1.098 and a \textit{Mean F1 Score} of 0.6672.
