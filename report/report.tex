@@ -10,9 +10,9 @@
 \usepackage{titlesec}
 \setcounter{secnumdepth}{4}
 
-\titlespacing*{\section}{0pt}{13pt}{5pt}
+\titlespacing*{\section}{0pt}{12pt}{5pt}
 \titlespacing*{\subsection}{0pt}{10pt}{5pt}
-\titlespacing*{\subsubsection}{0pt}{18pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{3pt}
 
 \title{Machine Intelligence Lab Hackathon: Learning to Recognize Musical Genre}
 \author{Matthias Büchi}
@@ -72,13 +72,15 @@ For prediction, non-overlapping 1 second windows were used. The output of all wi
 The system was implemented in Python, using \href{http://pytorch.org/}{PyTorch} for training the neural network. Experiments were performed on a server using a single GPU. 
 
 \section{Outlook}
-The system implemented seems to be a good starting point for further development. Its performance is not far from the baseline that uses a lot of specific features like \textit{MFCC}, \textit{Chroma}, etc. Before putting a lot of effort on implementing some further system, a bit more insight on the topic should be worked out, especially on what properties make the difference between the genres. Together with knowledge of error distribution between the genres the further steps can be determined. 
+The system implemented seems to be a good starting point for further development. Its performance is not far from the baseline that uses a lot of specific features like \textit{MFCC}, \textit{Chroma}, etc and the full \textit{medium} subset. Before putting a lot of effort on implementing some further system, a bit more insight on the topic should be worked out, especially on what properties make the difference between the genres. Together with knowledge of error distribution between the genres the further steps can be determined. 
 
 One problem that should be addressed anyway is the data, since it is very unbalanced. A test with additional data from the \textit{FMA dataset} could be helpful to see if the given system works better with balanced data. If so, the given training data could be extended for example by using shorter window shifts for the smaller genres.
 
 For improving the model, the learned feature maps from the convolutional layers have to be analyzed. This could be helpful to improve the layout and properties of the model. In addition it should also be investigated how the model behaves when training for a longer time.
 
-Another approach that could be interesting is the usage of extracted features from the audio signal (e.g. \textit{MFCC}, \textit{Chroma}, etc). As the baseline proves they work pretty good and they just average these features and their statistics over a full track. With classification on frames the temporal dependencies could probably be modelled better.
+Music also contains patterns over a longer time. Therefore the system could be improved to model these long-term properties, for example using a recurrent neural network (RNN). 
+
+Another approach that could be interesting is the usage of extracted features from the audio signal (e.g. \textit{MFCC}, \textit{Chroma}, etc). As the baseline proves they work pretty good and they just average these features and their statistics over a full track. With classification on frames the temporal patterns could probably be modelled better.
 
 \bibliographystyle{plain}
 \bibliography{sample}
