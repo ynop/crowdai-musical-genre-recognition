@@ -14,7 +14,7 @@
 \maketitle
 
 \begin{abstract}
-In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} the challenge \textit{WWW 2018 Challenge: Learning to Recognize Musical Genre} was tackled. With the increasing popularity of music streaming services and large music databases, an automatic system for managing the data is essential. The challenge exactly targets this topic, specifically classifying musical audio into genres (e.g. rock, pop, etc.). During the 3 days of work in this challenge the main focus was on implementing an approach using convolutional neural networks.
+In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} the challenge \textit{WWW 2018 Challenge: Learning to Recognize Musical Genre} was tackled. With the increasing popularity of music streaming services and large music databases, an automatic system for managing the data is essential. The challenge exactly targets this topic, specifically classifying musical audio into genres (e.g. rock, pop, etc.). During the 3 days of work in this challenge the main focus was on implementing an approach using convolutional neural networks on raw audio signal.
 \end{abstract}
 
 \section{Introduction}
@@ -28,11 +28,44 @@ In a next step the data was explored and prepared for the training of a neural n
 \section{Findings}
 
 \subsection{Data preparation}
-The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. 
+The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. For training the data was further split into a training and a validation set, where the training part consists of 80\% of tracks for every genre.
 
-\subsection{Model}
+\subsection{Recognition System}
+As input to the recognition system,  1.0 second windows shifted by a 0.25 seconds from the raw audio signal were used. Samples smaller than a second were padded with zeroes.
+
+To extract features from the signal three convolutional layers with average pooling were used. The first two layers small filter sizes were assigned and a bigger filter size to the third, intended to model long temporal properties. Subsequent fully-connected layers with softmax as final activation were used to predict the probabilities for the 16 musical genres. Except for the last layer batch normalization and ReLU activation were used.
+
+\begin{table}[h]
+	\begin{center}
+		\begin{tabular}{|l|l|l|l|}
+			
+			\hline
+			Layer & Size & Stride & Activation  \\
+			\hline\hline
+			conv-32 & 5 & 1 & ReLU \\
+			avgpool & 4 & 4 & - \\
+			conv-64 & 5 & 1 & ReLU \\
+			avgpool & 4 & 4 & - \\
+			conv-128 & 100 & 20 & ReLU \\
+			avgpool & 40 & 30 & - \\
+			fc & 70 & - & ReLU \\
+			fc & 30 & - & ReLU \\
+			fc & 16 & - & Softmax \\
+			\hline
+			
+		\end{tabular}
+		\caption{Layers and their properties used in the recognition system.}\label{table-6}
+	\end{center}
+\end{table}
+
+\subsubsection{Training}
+The system was trained using Adam with a learning rate of 0.001 for two iterations over the training data. It was trained to optimize the binary cross entropy loss.
+
+\subsubsection{Prediction}
+For prediction non-overlapping 1 second windows were used. The output of all windows of a single track was averaged to represent the final prediction. The system achieved a Mean Log Loss of \textbf{1.098} and a Mean F1 Score of \textbf{0.6672}.
 
 \section{Outlook}
+
 
 \bibliographystyle{plain}
 \bibliography{sample}
