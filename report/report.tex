@@ -1,11 +1,17 @@
-\documentclass[11pt]{article}
+\documentclass[11pt, twocolumn]{article}
 \usepackage{fullpage}
 \usepackage[utf8]{inputenc} % ü, ...
 \usepackage{graphicx}
 \usepackage[font=small,skip=10pt]{caption}
 \usepackage{titlesec}
 \usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{titlesec}
 \setcounter{secnumdepth}{4}
+
+\titlespacing*{\section}{0pt}{10pt}{5pt}
+\titlespacing*{\subsection}{0pt}{10pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{5pt}
 
 \title{Machine Intelligence Lab Hackathon: Learning to Recognize Musical Genre}
 \author{Matthias Büchi}
@@ -14,31 +20,30 @@
 \maketitle
 
 \begin{abstract}
-In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} the challenge \textit{WWW 2018 Challenge: Learning to Recognize Musical Genre} was tackled. With the increasing popularity of music streaming services and large music databases, an automatic system for managing the data is essential. The challenge exactly targets this topic, specifically classifying musical audio into genres (e.g. rock, pop, etc.). During the 3 days of work in this challenge the main focus was on implementing an approach using convolutional neural networks on raw audio signal.
+In the course of a final project in the \textit{ZHAW Machine Intelligence Lab} the challenge \textit{WWW 2018 Challenge: Learning to Recognize Musical Genre} was tackled. With the increasing popularity of music streaming services and large music databases, an automatic system for managing the data is essential. The challenge exactly targets this topic, specifically classifying musical audio into genres (e.g. rock, pop, etc.). During the 3 days of work in this challenge the main focus was on implementing an approach using convolutional neural networks (CNN) on raw audio signals.
 \end{abstract}
 
 \section{Introduction}
 
-The task of the challenge was to recognize the genre from a piece of music. Given a piece of audio, with a length of 30 seconds, one of 16 genres should be predicted. For this purpose a dataset of musical audio was provided in form of the FMA Dataset \cite{fma}. But only the \textit{medium} subset must be used for training, consisting of 25000 tracks. Furthermore a test set with 35000 tracks without labels was given, which have to be predicted.
+The task of the challenge was to recognize the genre from a piece of music. Given a piece of audio, with a length of 30 seconds, one of 16 genres should be predicted. For this purpose a dataset of musical audio was provided in form of the \textit{FMA Dataset} (\cite{fma}). But only the \textit{medium} subset must be used for training, consisting of 25000 tracks. Furthermore a test set with 35000 tracks without labels was given, which had to be predicted.
 
-The performance of the submitted result was evaluated using \textbf{Mean Log Loss} and as a second metric the \textbf{Mean F1 Score}. The baseline system in form of a SVM, available in the start-kit of the challenge (\cite{starterkit}), was first reproduced and achieved a Mean Log Loss of ~0.985 and a Mean F1 Score of 0.6922. 
+The performance of the submitted result was evaluated using \textit{Mean Log Loss} and as a second metric the \textit{Mean F1 Score}. The baseline system in form of a SVM, available in the \textit{starter-kit} (\cite{starterkit}) of the challenge, was first reproduced and achieved a \textit{Mean Log Loss} of $\sim$0.985 and a \textit{Mean F1 Score} of 0.6922. It used features also provided for the challenge, where every track has one feature vector with a dimension of 518. For different feature types, like \textit{MFCC}, the values and their statistics are average over the full track and then concatenated to form a single feature vector.
 
-In a next step the data was explored and prepared for the training of a neural network. From overlapping windows of the raw audio signal a \textbf{Convolutional Neural Network} with subsequent fully-connected layers was trained to predict the genre of the given window.
+In a next step the data was explored and prepared for training a neural network. From overlapping windows of the raw audio signal a convolutional neural network (CNN) with subsequent fully-connected layers was trained to predict the genre of a given window.
 
 \section{Findings}
 
 \subsection{Data preparation}
-The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. For training the data was further split into a training and a validation set, where the training part consists of 80\% of tracks for every genre.
+The training data consisted of 25000 music tracks, but unbalanced with respect to the genres. While the biggest genre had 7097 samples, the smallest one had only 21 samples. For training, the data was further split into a training and a validation set, where the training part contained 80\% of the tracks for every genre.
 
 \subsection{Recognition System}
-As input to the recognition system,  1.0 second windows shifted by a 0.25 seconds from the raw audio signal were used. Samples smaller than a second were padded with zeroes.
+As input to the recognition system 1-second windows shifted by 0.25 seconds from the raw audio signal were used. Samples smaller than a second were padded with zeroes.
 
-To extract features from the signal three convolutional layers with average pooling were used. The first two layers small filter sizes were assigned and a bigger filter size to the third, intended to model long temporal properties. Subsequent fully-connected layers with softmax as final activation were used to predict the probabilities for the 16 musical genres. Except for the last layer batch normalization and ReLU activation were used.
+To extract features from the signal three convolutional layers with average pooling were used. The first two layers use small filter sizes, whereas the third uses a bigger filter size, intended to model longer temporal properties. Subsequent fully-connected layers with softmax as final activation were used to predict the probabilities for 16 musical genres. Except for the last layer, batch normalization and ReLU activation were used.
 
 \begin{table}[h]
-	\begin{center}
-		\begin{tabular}{|l|l|l|l|}
-			
+\centering
+		\begin{tabular}{|l|l|l|l|}			
 			\hline
 			Layer & Size & Stride & Activation  \\
 			\hline\hline
@@ -52,20 +57,27 @@ To extract features from the signal three convolutional layers with average pool
 			fc & 30 & - & ReLU \\
 			fc & 16 & - & Softmax \\
 			\hline
-			
 		\end{tabular}
-		\caption{Layers and their properties used in the recognition system.}\label{table-6}
-	\end{center}
+		\caption{Layers and their properties used in the recognition system.}\label{table-6}	
 \end{table}
 
 \subsubsection{Training}
-The system was trained using Adam with a learning rate of 0.001 for two iterations over the training data. It was trained to optimize the binary cross entropy loss.
+The system was trained using \textit{Adam} with a learning rate of 0.001 for two iterations over the training data. It was trained to optimize the \textit{Binary Cross Entropy Loss}.
 
 \subsubsection{Prediction}
-For prediction non-overlapping 1 second windows were used. The output of all windows of a single track was averaged to represent the final prediction. The system achieved a Mean Log Loss of \textbf{1.098} and a Mean F1 Score of \textbf{0.6672}.
+For prediction, non-overlapping 1 second windows were used. The output of all windows for a single track were averaged to represent the final prediction. The submitted result achieved a \textit{Mean Log Loss} of 1.098 and a \textit{Mean F1 Score} of 0.6672.
+
+\subsection{Methods}
+The system was implemented in Python, using \href{http://pytorch.org/}{PyTorch} for training the neural network. Experiments were performed on a server using a single GPU. 
 
 \section{Outlook}
+The system implemented seems to be a good starting point for further development. Its performance is not far from the baseline that uses a lot of specific features like \textit{MFCC}, \textit{Chroma}, etc. Before putting a lot of effort on implementing some further system, a bit more insight on the topic should be worked out, especially on what properties make the difference between the genres. Together with knowledge of error distribution between the genres the further steps can be determined. 
 
+One problem that should be addressed anyway is the data, since it is very unbalanced. A test with additional data from the \textit{FMA dataset} could be helpful to see if the given system works better with balanced data. If so, the given training data could be extended for example by using shorter window shifts for the smaller genres.
+
+For improving the model, the learned feature maps from the convolutional layers have to be analyzed. This could be helpful to improve the layout and properties of the model. In addition it should also be investigated how the model behaves when training for a longer time.
+
+Another approach that could be interesting is the usage of extracted features from the audio signal (e.g. \textit{MFCC}, \textit{Chroma}, etc). As the baseline proves they work pretty good and they just average these features and their statistics over a full track. With classification on frames the temporal dependencies could probably be modelled better.
 
 \bibliographystyle{plain}
 \bibliography{sample}
