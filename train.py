@@ -33,6 +33,7 @@ parser.add_argument('--learning_rate', type=float, default=0.001)
 parser.add_argument('--num_epochs', type=int, default=1)
 parser.add_argument('--no_cuda', action="store_true")
 parser.add_argument('--small_balanced', action="store_true")
+parser.add_argument('--no_dev', action="store_true")
 
 args = parser.parse_args()
 
@@ -88,11 +89,17 @@ if args.small_balanced:
 #
 #
 
-train_ds = dataset.RawDataset(tr_list, feats)
-dev_ds = dataset.RawDataset(dev_list, feats)
+if args.no_dev:
+    tr_list.extend(dev_list)
 
+train_ds = dataset.RawDataset(tr_list, feats)
 train_loader = data.DataLoader(train_ds, batch_size=args.batch_size, shuffle=True)
-dev_loader = data.DataLoader(dev_ds, batch_size=args.batch_size, shuffle=False)
+
+if args.no_dev:
+    dev_loader = None
+else:
+    dev_ds = dataset.RawDataset(dev_list, feats)
+    dev_loader = data.DataLoader(dev_ds, batch_size=args.batch_size, shuffle=False)
 
 #
 #
